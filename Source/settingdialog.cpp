@@ -10,7 +10,8 @@ static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
 
 SettingDialog::SettingDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::SettingDialog)
+    ui(new Ui::SettingDialog),
+    m_intValidator(new QIntValidator(0, 4000000, this))
 {
     ui->setupUi(this);
 
@@ -100,16 +101,7 @@ void SettingDialog::fillPortsParameters()
     ui->parityBox->addItem(tr("Mark"), QSerialPort::MarkParity);
     ui->parityBox->addItem(tr("Space"), QSerialPort::SpaceParity);
 
-    ui->stopBitsBox->addItem(QStringLiteral("1"), QSerialPort::OneStop);
-#ifdef Q_OS_WIN
-    ui->stopBitsBox->addItem(tr("1.5"), QSerialPort::OneAndHalfStop);
-#endif
-    ui->stopBitsBox->addItem(QStringLiteral("2"), QSerialPort::TwoStop);
-
-    ui->flowControlBox->addItem(tr("None"), QSerialPort::NoFlowControl);
-    ui->flowControlBox->addItem(tr("RTS/CTS"), QSerialPort::HardwareControl);
-    ui->flowControlBox->addItem(tr("XON/XOFF"), QSerialPort::SoftwareControl);
-}
+   }
 
 void SettingDialog::showSettings(){
     fillPortsInfo();
@@ -161,16 +153,7 @@ void SettingDialog::updateSettings()
                 ui->parityBox->itemData(ui->parityBox->currentIndex()).toInt());
     m_currentSettings.stringParity = ui->parityBox->currentText();
 
-    m_currentSettings.stopBits = static_cast<QSerialPort::StopBits>(
-                ui->stopBitsBox->itemData(ui->stopBitsBox->currentIndex()).toInt());
-    m_currentSettings.stringStopBits = ui->stopBitsBox->currentText();
-
-    m_currentSettings.flowControl = static_cast<QSerialPort::FlowControl>(
-                ui->flowControlBox->itemData(ui->flowControlBox->currentIndex()).toInt());
-    m_currentSettings.stringFlowControl = ui->flowControlBox->currentText();
-
-    m_currentSettings.localEchoEnabled = ui->localEchoCheckBox->isChecked();
-}
+ }
 
 
 

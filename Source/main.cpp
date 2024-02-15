@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    QStringList Languages;
+  /*  QStringList Languages;
     QTranslator Trans;
     Languages<<"English"<<"Arabic";
     QString Lang=QInputDialog::getItem(NULL,"Select Language","Language",Languages);
@@ -20,12 +20,13 @@ int main(int argc, char *argv[])
     else if(Lang=="Arabic"){
         Trans.load(":/arabic.qm");
         a.installTranslator(&Trans);
-
-
     }
 
+
+*/
+
     MainWindow w;
-    w.changeLayout(Lang);
+  //  w.changeLayout(Lang);
     w.showMaximized();
 
     return a.exec();

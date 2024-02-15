@@ -166,36 +166,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QGroupBox" name="additionalOptionsGroupBox">
-   <property name="geometry">
-    <rect>
-     <x>11</x>
-     <y>229</y>
-     <width>141</width>
-     <height>71</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Additional options</string>
-   </property>
-   <widget class="QCheckBox" name="localEchoCheckBox">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>40</y>
-      <width>83</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Local echo</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>18</x>

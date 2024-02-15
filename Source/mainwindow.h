@@ -39,6 +39,7 @@ private slots:
     void readData();
     QVector<QString>  strokeData(QString Data);
     void parseData();
+    void updateData();
 
 
 

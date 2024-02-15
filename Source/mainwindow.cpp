@@ -7,10 +7,20 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , m_status(new QLabel),
-      m_settings(new SettingDialog)
+      m_settings(new SettingDialog),
+      m_serial(new QSerialPort(this)),
+      m_Data(new Data)
 {
     ui->setupUi(this);
+
+    ui->actionConnect->setEnabled(true);
+    ui->actionDisconnect->setEnabled(false);
+    ui->actionExits->setEnabled(true);
+    ui->actionConfigure->setEnabled(true);
     initConnection();
+
+    connect(m_serial, &QSerialPort::readyRead, this, &MainWindow::readData);
+
 }
 
 void MainWindow::changeLayout(QString Lang)
@@ -29,6 +39,7 @@ void MainWindow::changeLayout(QString Lang)
 
 
          }
+
 
 }
 
@@ -64,15 +75,22 @@ void MainWindow::initConnection()
     connect(ui->actionConnect, &QAction::triggered, this, &MainWindow::openSerialPort);
     connect(ui->actionDisconnect, &QAction::triggered, this, &MainWindow::closeSerialPort);
     connect(ui->actionExits, &QAction::triggered, this, &MainWindow::close);
-    connect(ui->actionSetting, &QAction::triggered, m_settings, &SettingDialog::showSettings);
+    connect(ui->actionConfigure, &QAction::triggered, m_settings, &SettingDialog::showSettings);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::about);
     connect(ui->actionAbout_QT, &QAction::triggered, qApp, &QApplication::aboutQt);
+
 }
 
 void MainWindow ::openSerialPort()
 {
 
+        qDebug()<<"OPEN SERIAL";
         const SettingDialog::Settings p = m_settings->settings();
+        qDebug()<< p.name<<"name ";
+        qDebug()<< p.baudRate<<"baudRate ";
+        qDebug()<< p.dataBits<<"dataBits ";
+        qDebug()<< p.parity<<"parity ";
+
         m_serial->setPortName(p.name);
         m_serial->setBaudRate(p.baudRate);
         m_serial->setDataBits(p.dataBits);
@@ -80,22 +98,18 @@ void MainWindow ::openSerialPort()
         m_serial->setStopBits(p.stopBits);
         m_serial->setFlowControl(p.flowControl);
         if (m_serial->open(QIODevice::ReadWrite)) {
+            qDebug()<<"Read";
             ui->actionConnect->setEnabled(false);
             ui->actionDisconnect->setEnabled(true);
-            ui->actionSetting->setEnabled(false);
+            ui->actionConfigure->setEnabled(false);
             ui->newpushButton_15->setEnabled(true);
-           showStatusMessage(tr("Connected to %1 : %2, %3, %4, %5, %6")
-                              .arg(p.name).arg(p.stringBaudRate).arg(p.stringDataBits)
-                              .arg(p.stringParity).arg(p.stringStopBits).arg(p.stringFlowControl));
 
     } else {
-            QMessageBox::critical(this, tr("Error"), m_serial->errorString());
 
-            showStatusMessage(tr("Open error"));
             qDebug()<<"eror";
 
-    }
 
+}
 }
 
 void MainWindow::closeSerialPort()
@@ -104,7 +118,7 @@ void MainWindow::closeSerialPort()
         m_serial->close();
     ui->actionConnect->setEnabled(true);
     ui->actionDisconnect->setEnabled(false);
-    ui->actionSetting->setEnabled(true);
+    ui->actionConfigure->setEnabled(true);
     ui->newpushButton_15->setEnabled(false);
     showStatusMessage(tr("Disconnected"));
 }
@@ -126,7 +140,6 @@ void MainWindow::readData()
 {
 
     if(m_serial->canReadLine()){
-
 
         const QByteArray data = m_serial->readLine();
         qDebug()<<data<<endl;
@@ -180,9 +193,8 @@ void MainWindow::readData()
          RefrigeratorDefrostFactor   = values.at(40);
          TimeToDefrostConditions   = values.at(41);
 
-        // qDebug()<<strokeData(QString(data).trimmed());
-       // parseData(strokeData(QString(data).trimmed()));
-        //updateData();
+         parseData();
+         updateData();
     }
 }
 
@@ -277,6 +289,83 @@ void MainWindow::parseData()
         m_Data->setRefrigeratorDefrostFactor(RefrigeratorDefrostFactor);
 
         m_Data->setTimeToDefrostConditions (TimeToDefrostConditions);
+
+}
+
+
+void MainWindow::updateData()
+{
+    if(m_Data->RefrigeratorStateMachine!=NULL) ui->lRefStateMachine->setText(m_Data->RefrigeratorStateMachine);
+
+    if(m_Data->RefrigeratorPreCoolingStateMachine !=NULL) ui->eRefPreCooling->setText(m_Data->RefrigeratorPreCoolingStateMachine);
+
+    if(m_Data->RefrigeratorMode !=NULL) ui->eRefMod->setText(m_Data->RefrigeratorMode );
+
+    if(m_Data->OverloadPullDownModeStatesOR !=NULL) ui->eOverloadPullDownMode->setText(m_Data->OverloadPullDownModeStatesOR);
+
+    if(m_Data->OverTemperatureModeActions_OnStatesOR !=NULL) ui->eOverTempMode->setText(m_Data->OverTemperatureModeActions_OnStatesOR );
+
+    if(m_Data->Mode0!=NULL) ui->eMode0->setText(m_Data->Mode0);
+
+    if(m_Data->CorrectedAmbientTemperature!=NULL) ui->eCorrectedAmbientTemp->setText(m_Data->CorrectedAmbientTemperature);
+
+    if(m_Data->AmbientThermistorTemperature!=NULL) ui->eAmbientThermistorTemp->setText(m_Data->AmbientThermistorTemperature);
+
+    if(m_Data->FreezerThermistorTemperature!=NULL) ui->eFreezerThermistorTemp->setText(m_Data->FreezerThermistorTemperature);
+
+    if(m_Data->RefrigeratorThermistorTemperature!=NULL) ui->eRefThermistorTemp->setText(m_Data->RefrigeratorThermistorTemperature);
+
+    if(m_Data->DefrostThermistorTemperature!=NULL) ui->eDefrostThermistorTemp->setText(m_Data->DefrostThermistorTemperature);
+
+    if(m_Data->CompressorState!=NULL) ui->etComState->setText(m_Data->CompressorState);
+
+    if(m_Data->CompressorSetSpeed!=NULL)ui->eComSpeedSetVal->setText(m_Data->CompressorState);
+
+    if(m_Data->CompressorActualRunningSpeed!=NULL)ui->eCompressorActualRunningSpeed->setText(m_Data->CompressorActualRunningSpeed);
+
+    if(m_Data->CompressorStep!=NULL)        ui->eComStep->setText(m_Data->CompressorStep);
+
+    if(m_Data->StartingSpeedCondition!=NULL)ui->eStartingSpeedCondition->setText(m_Data->StartingSpeedCondition);
+
+    if(m_Data->CompressorCutonPoint!=NULL)  ui->eComCutOnPoint->setText(m_Data->CompressorCutonPoint);
+
+    if(m_Data->CompressorCutOffPoint!=NULL) ui->eComCutOffPoint->setText(m_Data->CompressorCutOffPoint);
+
+    if(m_Data->DamperState!=NULL)           ui->eDamperState->setText(m_Data->DamperState);
+
+    if(m_Data->DamperCutOnPoint!=NULL)      ui->eDamperCutOnPoint->setText(m_Data->DamperCutOnPoint);
+
+    if(m_Data->DamperCutOffPoint!=NULL)     ui->eDamperCutOffPoint->setText(m_Data->DamperCutOffPoint);
+
+    if(m_Data->RefrigeratorUserSelectionTemperature!=NULL)       ui->eRefrigeratorUserSelectionTemp->setText(m_Data->RefrigeratorUserSelectionTemperature);
+
+    if(m_Data->FreezerUserSelectionTemperature!=NULL)            ui->eFreezerrUserSelectionTemp->setText(m_Data->FreezerUserSelectionTemperature);
+
+    if(m_Data->HeaterState!=NULL)            ui->eHeaterState->setText(m_Data->HeaterState);
+
+    if(m_Data->HeaterOnTime!=NULL)            ui->eHeaterOnTime->setText(m_Data->HeaterOnTime);
+
+    if(m_Data->FreezerDoorState!=NULL)            ui->elFreezerDoorState->setText(m_Data->FreezerDoorState);
+
+    if(m_Data->RefrigeratorDoorState!=NULL)            ui->eRefrigeratorDoorState->setText(m_Data->RefrigeratorDoorState);
+
+    if(m_Data->FreezerDoorCummulativeOpenTime!=NULL)            ui->eFreezerDoorCommulativeOpenTime->setText(m_Data->FreezerDoorCummulativeOpenTime);
+
+    if(m_Data->RefrigeratorDoorCummulativeOpenTime!=NULL)            ui->eRefigeratorDoorCommulativeOpenTime->setText(m_Data->RefrigeratorDoorCummulativeOpenTime);
+
+    if(m_Data->TimesOfFreezerDoorOpen!=NULL)            ui->eTimeOfFreezerDoorOpen->setText(m_Data->TimesOfFreezerDoorOpen);
+
+    if(m_Data->TimesOfRefrigeratorDoorOpen!=NULL)            ui->eTimeofRefDoorOpen->setText(m_Data->TimesOfRefrigeratorDoorOpen);
+
+    if(m_Data->FanTargetSpeed!=NULL)            ui->eFanTargetSpeed->setText(m_Data->FanTargetSpeed);
+
+    if(m_Data->FanMeasuredSpeed!=NULL)            ui->eFanMeasuredSpeed->setText(m_Data->FanMeasuredSpeed);
+
+    if(m_Data->FanSpeedError!=NULL)            ui->eFanSpeedError->setText(m_Data->FanSpeedError);
+
+    if(m_Data->FanDACValue!=NULL)            ui->eFanDACValue->setText(m_Data->FanDACValue);
+
+
 
 }
 

@@ -98,6 +98,10 @@ public:
 
     QString TimeToDefrostConditions=NULL;
 
+    QString Time=NULL;
+
+
+
 
     void setRefrigeratorStateMachine(const QString &newrefrigeratorStateMachine);
 
@@ -186,6 +190,8 @@ public:
     void setRefrigeratorDefrostFactor(const QString &newRefrigeratorDefrostFactor);
 
     void setTimeToDefrostConditions(const QString &newTimeToDefrostConditions);
+
+    void setTime(const QString &newTime);
 
 
 

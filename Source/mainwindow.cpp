@@ -3,6 +3,9 @@
 
 #include "QDebug"
 #include<QMessageBox>
+#include <QDateTime>
+#include <QTimer>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -83,14 +86,7 @@ void MainWindow::initConnection()
 
 void MainWindow ::openSerialPort()
 {
-
-        qDebug()<<"OPEN SERIAL";
         const SettingDialog::Settings p = m_settings->settings();
-        qDebug()<< p.name<<"name ";
-        qDebug()<< p.baudRate<<"baudRate ";
-        qDebug()<< p.dataBits<<"dataBits ";
-        qDebug()<< p.parity<<"parity ";
-
         m_serial->setPortName(p.name);
         m_serial->setBaudRate(p.baudRate);
         m_serial->setDataBits(p.dataBits);
@@ -295,7 +291,7 @@ void MainWindow::parseData()
 
 void MainWindow::updateData()
 {
-    if(m_Data->RefrigeratorStateMachine!=NULL) ui->lRefStateMachine->setText(m_Data->RefrigeratorStateMachine);
+    if(m_Data->RefrigeratorStateMachine!=NULL) ui->eRefStateMachine->setText(m_Data->RefrigeratorStateMachine);
 
     if(m_Data->RefrigeratorPreCoolingStateMachine !=NULL) ui->eRefPreCooling->setText(m_Data->RefrigeratorPreCoolingStateMachine);
 
@@ -353,9 +349,9 @@ void MainWindow::updateData()
 
     if(m_Data->RefrigeratorDoorCummulativeOpenTime!=NULL)            ui->eRefigeratorDoorCommulativeOpenTime->setText(m_Data->RefrigeratorDoorCummulativeOpenTime);
 
-    if(m_Data->TimesOfFreezerDoorOpen!=NULL)            ui->eTimeOfFreezerDoorOpen->setText(m_Data->TimesOfFreezerDoorOpen);
+    if(m_Data->TimesOfFreezerDoorOpen!=NULL)            ui->eTimesOfFreezerDoorOpen->setText(m_Data->TimesOfFreezerDoorOpen);
 
-    if(m_Data->TimesOfRefrigeratorDoorOpen!=NULL)            ui->eTimeofRefDoorOpen->setText(m_Data->TimesOfRefrigeratorDoorOpen);
+    if(m_Data->TimesOfRefrigeratorDoorOpen!=NULL)            ui->eTimesOfRefDoorOpen->setText(m_Data->TimesOfRefrigeratorDoorOpen);
 
     if(m_Data->FanTargetSpeed!=NULL)            ui->eFanTargetSpeed->setText(m_Data->FanTargetSpeed);
 
@@ -365,7 +361,24 @@ void MainWindow::updateData()
 
     if(m_Data->FanDACValue!=NULL)            ui->eFanDACValue->setText(m_Data->FanDACValue);
 
+    if (m_Data->DamperState!=NULL) ui->eDamperState->setText(m_Data->DamperState);
 
+    if (m_Data->CompressorTimer!=NULL) ui->eComTimerInMin->setText(m_Data->CompressorTimer);
+
+    if (m_Data->CompressorOnTimein!=NULL) ui->eComOnTimeInMin->setText(m_Data->CompressorOnTimein);
+
+    if (m_Data->CompressorPreviousDuty!=NULL) ui->eComPreviousDuty->setText(m_Data->CompressorPreviousDuty);
+
+    if (m_Data->CompressorOldDuty!=NULL) ui->eComOldDuty->setText(m_Data->CompressorOldDuty);
+
+    if (m_Data->CompressorCycleAccumulativeOnTime!=NULL) ui->eComCycleAccuOnTime->setText(m_Data->CompressorCycleAccumulativeOnTime);
+
+    if (m_Data->CompressorAccumulativeOnTime!=NULL) ui->eComAccuOnTime->setText(m_Data->CompressorAccumulativeOnTime);
+
+    if(m_Data->Time!=NULL)
+        ui->RealTime->setText(m_Data->Time);
+
+    ui->RealTime->setText(QDateTime::currentDateTime().toString("dd.MM.yyyy.h:m:s ap"));
 
 }
 

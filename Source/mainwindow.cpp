@@ -189,6 +189,7 @@ void MainWindow::readData()
          RefrigeratorDefrostFactor   = values.at(40);
          TimeToDefrostConditions   = values.at(41);
 
+         qDebug()<<m_Data->DamperState;
          parseData();
          updateData();
     }
@@ -361,8 +362,6 @@ void MainWindow::updateData()
 
     if(m_Data->FanDACValue!=NULL)            ui->eFanDACValue->setText(m_Data->FanDACValue);
 
-    if (m_Data->DamperState!=NULL) ui->eDamperState->setText(m_Data->DamperState);
-
     if (m_Data->CompressorTimer!=NULL) ui->eComTimerInMin->setText(m_Data->CompressorTimer);
 
     if (m_Data->CompressorOnTimein!=NULL) ui->eComOnTimeInMin->setText(m_Data->CompressorOnTimein);
@@ -386,3 +385,9 @@ void MainWindow::showStatusMessage(const QString &message)
 {
     m_status->setText(message);
 }
+
+void MainWindow::on_newpushButton_15_clicked()
+{
+
+}
+

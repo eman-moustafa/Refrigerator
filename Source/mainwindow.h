@@ -45,6 +45,8 @@ private slots:
 
     void showStatusMessage(const QString &message);
 
+    void on_newpushButton_15_clicked();
+
 private:
     Ui::MainWindow *ui;
     QVector<QString> LastFrame;

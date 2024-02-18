@@ -171,9 +171,9 @@ void Data::setCompressorCutOffPoint(const QString &newCompressorCutOffPoint)
 void Data::setDamperState(const QString &newDamperState)
 {
 
-    if(newDamperState=="0") CompressorState="DAMPER_CLOSE";
-    else if(newDamperState=="1")CompressorState="DAMPER_OPEN";
-    else CompressorState="undefined";
+    if(newDamperState=="0") DamperState="DAMPER_CLOSE";
+    else if(newDamperState=="1")DamperState="DAMPER_OPEN";
+    else DamperState="undefined";
 }
 
 void Data::setDamperCutonPoint (const QString &newDamperCutonPoint)

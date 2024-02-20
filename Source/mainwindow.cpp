@@ -40,6 +40,8 @@ void MainWindow::changeLayout(QString Lang)
          QMessageBox::about(this, tr("Choose Language"),
                             tr("You Should Choose Language ."));
 
+         QApplication::quit();
+
 
          }
 
@@ -391,3 +393,20 @@ void MainWindow::on_newpushButton_15_clicked()
 
 }
 
+
+/*
+ * {"Time","RefrigeratorStateMachine","RefrigeratorPre_coolingStateMachine",
+                               "RefrigeratorMode","OverloadPullDownModeStatesOR","OverTemperatureModeActions_OnStatesOR",
+                               "Mode0","CorrectedAmbientTemperature","AmbientThermistorTemperature",
+                               "FreezerThermistorTemperature","RefrigeratorThermistorTemperature","DefrostThermistorTemperature",
+                               "CompressorState","CompressorSetSpeed","CompressorActualRunningSpeed","CompressorStep",
+                               "StartingSpeedCondition","CompressorCutonPoint","CompressorCutOffPoint","DamperState",
+                               "DamperCutOnPoint","DamperCutOffPoint","CompressorTimer","CompressorOnTimein","CompressorCycleAccumulativeOnTime",
+                               "CompressorAccumulativeOnTime","CompressorPreviousDuty","CompressorOldDuty","RefrigeratorUserSelectionTemperature",
+                               "RefPreCoolingStateMachine","FreezerUserSelectionTemperature","HeaterState","HeaterOnTime",
+                               "FreezerDoorState","RefrigeratorDoorState","FreezerDoorCummulativeOpenTime",
+                               "RefrigeratorDoorCummulativeOpenTime","TimesOfRefrigeratorDoorOpen",
+                               "TimesOfFreezerDoorOpen","FanTargetSpeed","FanMeasuredSpeed",
+                               "FanSpeedError","FanDACValue","RefrigeratorDefrostFactor","RecorderManager",
+                               };
+*/

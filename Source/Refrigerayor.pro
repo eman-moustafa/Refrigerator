@@ -37,4 +37,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     resource.qrc
 
-DISTFILES +=
+DISTFILES += \
+    D:/AC Monitor/AC Monitor/Final Version Work - Copy (2)/QXlsx.pri
+
+SUBDIRS += \
+    D:/AC Monitor/AC Monitor/Final Version Work - Copy (2)/QXlsx.pro

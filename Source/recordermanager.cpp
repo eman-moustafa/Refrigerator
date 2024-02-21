@@ -5,7 +5,7 @@
 RecorderManager::RecorderManager()
 {
     m_db=QSqlDatabase::addDatabase("QSQLITE");
-    m_db.setDatabaseName("Records.sqlite");
+    m_db.setDatabaseName("Records.db");
 
     if(m_db.open()){
          query=new QSqlQuery (m_db);
@@ -82,35 +82,64 @@ bool RecorderManager::createRecordFrame(QString RecName, QVector<QString> Data)
     QString colums="";
     QString values="";
     if(m_db.isOpen()){
-
-
-
-
-
-
-
-
-
-
-                if (!colums.isEmpty()) {
-                       colums.truncate(colums.size()-1);
-                   }
-                if (!values.isEmpty()) {
-                       values.truncate(values.size()-1);
-                   }
-                query->exec(QString("INSERT INTO %1 (%2 )VALUES (%3)").arg(RecName,colums,values));
-                // check if the query was executed successfully
-                if (!query->isActive()) {
-                    emit RecordcreateFrameError("Failed to insert elements :" +query->lastError().text());
-                    qDebug()<<"Failed to insert elements :" <<query->lastError().text()<<endl;
-                 }
+        
+        QSqlQuery query;
+        query.prepare("INSERT INTO '"+RecName+"' (Time ,RefrigeratorStateMachine, RefrigeratorPreCoolingStateMachine, RefrigeratorMode, OverloadPullDownModeStatesOR, OverTemperatureModeActions_OnStatesOR, "
+                                              "Mode0,CorrectedAmbientTemperature,AmbientThermistorTemperature,FreezerThermistorTemperature,"
+                                              "RefrigeratorThermistorTemperature,DefrostThermistorTemperature,CompressorState,"
+                                              "CompressorSetSpeed,CompressorActualRunningSpeed,CompressorStep,StartingSpeedCondition,"
+                                              "CompressorCutonPoint,CompressorCutOffPoint,DamperState,DamperCutOnPoint,DamperCutOffPoint,"
+                                              "CompressorTimer,CompressorOnTimein,CompressorCycleAccumulativeOnTime,CompressorAccumulativeOnTime,"
+                                              "CompressorPreviousDuty,CompressorOldDuty,RefrigeratorUserSelectionTemperature,RefPreCoolingStateMachine,"
+                                              "FreezerUserSelectionTemperature,HeaterState,HeaterOnTime,FreezerDoorState,RefrigeratorDoorState,"
+                                              "FreezerDoorCummulativeOpenTime,RefrigeratorDoorCummulativeOpenTime,TimesOfRefrigeratorDoorOpen,"
+                                              "TimesOfFreezerDoorOpen,FanTargetSpeed,FanMeasuredSpeed,FanSpeedError,FanDACValue,"
+                                              "RefrigeratorDefrostFactor,TimeToDefrostConditions) "
+           
+                      "VALUES (:Time ,:RefrigeratorStateMachine, :RefrigeratorPreCoolingStateMachine, :RefrigeratorMode, "
+                                              ":OverloadPullDownModeStatesOR,:OverTemperatureModeActions_OnStatesOR, "
+                                              ":Mode0,:CorrectedAmbientTemperature,:AmbientThermistorTemperature,:FreezerThermistorTemperature,"
+                                              ":RefrigeratorThermistorTemperature,:DefrostThermistorTemperature,:CompressorState,"
+                                              ":CompressorSetSpeed,:CompressorActualRunningSpeed,:CompressorStep,:StartingSpeedCondition,"
+                                              ":CompressorCutonPoint,:CompressorCutOffPoint,:DamperState,:DamperCutOnPoint,:DamperCutOffPoint,"
+                                              ":CompressorTimer,:CompressorOnTimein,:CompressorCycleAccumulativeOnTime,:CompressorAccumulativeOnTime,"
+                                              ":CompressorPreviousDuty,:CompressorOldDuty,:RefrigeratorUserSelectionTemperature,:RefPreCoolingStateMachine,"
+                                              ":FreezerUserSelectionTemperature,:HeaterState,:HeaterOnTime,:FreezerDoorState,:RefrigeratorDoorState,"
+                                              ":FreezerDoorCummulativeOpenTime,:RefrigeratorDoorCummulativeOpenTime,:TimesOfRefrigeratorDoorOpen,"
+                                              ":TimesOfFreezerDoorOpen,:FanTargetSpeed,:FanMeasuredSpeed,:FanSpeedError,:FanDACValue,"
+                                              ":RefrigeratorDefrostFactor,:TimeToDefrostConditions) ");
+        
+        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
+        query.bindValue(":RefrigeratorPreCoolingStateMachine", RefrigeratorPreCoolingStateMachine);
+        query.bindValue(":RefrigeratorMode", RefrigeratorMode);
+        query.bindValue(":OverloadPullDownModeStatesOR", OverloadPullDownModeStatesOR);
+        query.bindValue(":OverTemperatureModeActions_OnStatesOR", OverTemperatureModeActions_OnStatesOR);
+        
+        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
+        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
+        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
+        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
+        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
+        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
+        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
+        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
+        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
+        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
+        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
+        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
+        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
+        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
+        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
+        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
+        
+        
                 return true;
     }
-    else
+   else
         {
                 emit DataBaseError("Cannot connect To database !!!!"+m_db.lastError().text());
                 return false;
-    };
+    }
 }
 
 QMap<QString,QString> RecorderManager::RetrieveFramedata(QString RecName, int index)

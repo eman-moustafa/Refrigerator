@@ -191,7 +191,6 @@ void MainWindow::readData()
          RefrigeratorDefrostFactor   = values.at(40);
          TimeToDefrostConditions   = values.at(41);
 
-         qDebug()<<m_Data->DamperState;
          parseData();
          updateData();
     }

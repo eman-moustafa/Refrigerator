@@ -1,11 +1,9 @@
 #include "recordermanager.h"
-#include <QRegularExpression>
-
 
 RecorderManager::RecorderManager()
 {
     m_db=QSqlDatabase::addDatabase("QSQLITE");
-    m_db.setDatabaseName("Records.db");
+    m_db.setDatabaseName("Records.sqlite");
 
     if(m_db.open()){
          query=new QSqlQuery (m_db);
@@ -82,64 +80,36 @@ bool RecorderManager::createRecordFrame(QString RecName, QVector<QString> Data)
     QString colums="";
     QString values="";
     if(m_db.isOpen()){
-        
-        QSqlQuery query;
-        query.prepare("INSERT INTO '"+RecName+"' (Time ,RefrigeratorStateMachine, RefrigeratorPreCoolingStateMachine, RefrigeratorMode, OverloadPullDownModeStatesOR, OverTemperatureModeActions_OnStatesOR, "
-                                              "Mode0,CorrectedAmbientTemperature,AmbientThermistorTemperature,FreezerThermistorTemperature,"
-                                              "RefrigeratorThermistorTemperature,DefrostThermistorTemperature,CompressorState,"
-                                              "CompressorSetSpeed,CompressorActualRunningSpeed,CompressorStep,StartingSpeedCondition,"
-                                              "CompressorCutonPoint,CompressorCutOffPoint,DamperState,DamperCutOnPoint,DamperCutOffPoint,"
-                                              "CompressorTimer,CompressorOnTimein,CompressorCycleAccumulativeOnTime,CompressorAccumulativeOnTime,"
-                                              "CompressorPreviousDuty,CompressorOldDuty,RefrigeratorUserSelectionTemperature,RefPreCoolingStateMachine,"
-                                              "FreezerUserSelectionTemperature,HeaterState,HeaterOnTime,FreezerDoorState,RefrigeratorDoorState,"
-                                              "FreezerDoorCummulativeOpenTime,RefrigeratorDoorCummulativeOpenTime,TimesOfRefrigeratorDoorOpen,"
-                                              "TimesOfFreezerDoorOpen,FanTargetSpeed,FanMeasuredSpeed,FanSpeedError,FanDACValue,"
-                                              "RefrigeratorDefrostFactor,TimeToDefrostConditions) "
-           
-                      "VALUES (:Time ,:RefrigeratorStateMachine, :RefrigeratorPreCoolingStateMachine, :RefrigeratorMode, "
-                                              ":OverloadPullDownModeStatesOR,:OverTemperatureModeActions_OnStatesOR, "
-                                              ":Mode0,:CorrectedAmbientTemperature,:AmbientThermistorTemperature,:FreezerThermistorTemperature,"
-                                              ":RefrigeratorThermistorTemperature,:DefrostThermistorTemperature,:CompressorState,"
-                                              ":CompressorSetSpeed,:CompressorActualRunningSpeed,:CompressorStep,:StartingSpeedCondition,"
-                                              ":CompressorCutonPoint,:CompressorCutOffPoint,:DamperState,:DamperCutOnPoint,:DamperCutOffPoint,"
-                                              ":CompressorTimer,:CompressorOnTimein,:CompressorCycleAccumulativeOnTime,:CompressorAccumulativeOnTime,"
-                                              ":CompressorPreviousDuty,:CompressorOldDuty,:RefrigeratorUserSelectionTemperature,:RefPreCoolingStateMachine,"
-                                              ":FreezerUserSelectionTemperature,:HeaterState,:HeaterOnTime,:FreezerDoorState,:RefrigeratorDoorState,"
-                                              ":FreezerDoorCummulativeOpenTime,:RefrigeratorDoorCummulativeOpenTime,:TimesOfRefrigeratorDoorOpen,"
-                                              ":TimesOfFreezerDoorOpen,:FanTargetSpeed,:FanMeasuredSpeed,:FanSpeedError,:FanDACValue,"
-                                              ":RefrigeratorDefrostFactor,:TimeToDefrostConditions) ");
-        
-        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
-        query.bindValue(":RefrigeratorPreCoolingStateMachine", RefrigeratorPreCoolingStateMachine);
-        query.bindValue(":RefrigeratorMode", RefrigeratorMode);
-        query.bindValue(":OverloadPullDownModeStatesOR", OverloadPullDownModeStatesOR);
-        query.bindValue(":OverTemperatureModeActions_OnStatesOR", OverTemperatureModeActions_OnStatesOR);
-        
-        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
-        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
-        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
-        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
-        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
-        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
-        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
-        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
-        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
-        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
-        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
-        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
-        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
-        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
-        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
-        query.bindValue(":RefrigeratorStateMachine", RefrigeratorStateMachine);
-        
-        
+        QVector<QString>::iterator itt;
+                for (itt = Data.begin(); itt != Data.end(); ++itt) {
+                    QStringList list = (*itt).split(QRegExp("\\s+"), QString::SkipEmptyParts);
+                    if(list.length()>=2){
+                        if(FrameData.contains(list[0])){
+                            colums+=list[0]+",";
+                            values+="\'"+list[1]+"\'"+",";
+                        }
+
+                    }
+                }
+                if (!colums.isEmpty()) {
+                       colums.truncate(colums.size()-1);
+                   }
+                if (!values.isEmpty()) {
+                       values.truncate(values.size()-1);
+                   }
+                query->exec(QString("INSERT INTO %1 (%2 )VALUES (%3)").arg(RecName,colums,values));
+                // check if the query was executed successfully
+                if (!query->isActive()) {
+                    emit RecordcreateFrameError("Failed to insert elements :" +query->lastError().text());
+                    qDebug()<<"Failed to insert elements :" <<query->lastError().text()<<endl;
+                 }
                 return true;
     }
-   else
+    else
         {
                 emit DataBaseError("Cannot connect To database !!!!"+m_db.lastError().text());
                 return false;
-    }
+    };
 }
 
 QMap<QString,QString> RecorderManager::RetrieveFramedata(QString RecName, int index)
@@ -178,4 +148,106 @@ QMap<QString,QString> RecorderManager::RetrieveFramedata(QString RecName, int in
 
 }
 
+void RecorderManager::ExtractRecord(QString RecName,QString cols,int offset,QString Path){
+    if(m_db.isOpen()){
+        query->exec(QString("SELECT %1 FROM %2").arg(cols,RecName));
+        if (!query->isActive()) {
+            qDebug()<<"Failed to Extract record : " <<query->lastError().text();
+            emit RecordExportError(QString("Failed to Extract record : " +query->lastError().text()));
+            return;
+         }
+        QSqlRecord record = query->record();
+        // Create a new Excel document
+        //QXlsx::Document xlsx;
+        int row = 1;
 
+        // Write the column headers to the first row of the worksheet
+        for (int i = 0; i <= record.count(); i++) {
+         //   xlsx.write(row, i+1 , record.fieldName(i));
+        }
+
+        // Write the data to the worksheet
+        int counter=0;
+        while (query->next()) {
+            if(counter%offset==0){
+                 row++;
+                for (int i = 0; i <= record.count(); i++) {
+                  //  xlsx.write(row, i+1, query->value(i).toString());
+                }
+            }
+            counter++;
+        }
+        emit RecordExportSucc(RecName+" Has Been exported Suc ! to "+Path);
+
+        // Save the Excel document to a file
+ qDebug()<<QString(Path+".xlsx");
+ //xlsx.saveAs(QString(Path+".xlsx"));
+
+    }
+    else
+        {
+                emit DataBaseError("Cannot connect To database !!!!"+m_db.lastError().text());
+        };
+
+}
+
+void RecorderManager::importRecord(QString Path){
+    if(m_db.isOpen()){
+        QRegularExpression regex("^[0-9\\W]");
+        QString newfilename;
+               QFile f(Path);
+               QFileInfo fileInfo(f.fileName());
+               QString filename(fileInfo.baseName());
+               //QXlsx::Document xlsx(Path);
+               // Get the data from the first worksheet of the Excel file
+
+               //if(xlsx.load()){
+
+
+                    //Insert the data into the SQLite table
+                  // for (int i = 1; i <= xlsx.dimension().rowCount(); i++) {
+                    //   QVector<QString> Values;
+                      // Values.reserve(FrameData.length());
+                       //for (int j = 1; j <= xlsx.dimension().columnCount(); j++) {
+                         //  Values.push_back(QString(xlsx.read(1,j).toString()+" "+xlsx.read(i,j).toString()));
+                       }
+                       //if(i==1){
+                         //  if (regex.match(filename).hasMatch()) {
+                           //        newfilename = "Rec_" + filename;
+                             //     qDebug() << "Modified File Name:" << filename;
+                           //createRecord(newfilename);
+                           }
+                           //else {
+                             //     qDebug() << "File Name:" << Path;
+                               //if(i==1){
+
+                                 //  createRecord(filename);
+
+                              // }
+                               //else{
+                                 //  createRecordFrame(filename,Values);
+                              // }
+                           //}
+
+                      // }
+                       //else{
+                         //  createRecordFrame(newfilename,Values);
+                       //}
+                   //}
+
+                   //emit RecordimportSucc(newfilename+ "Importe Succ ! added To Database");
+
+                     //  }
+
+
+               //else{
+                  //// qDebug()<<"Failed To open File"<<endl;
+//                   emit RecordImportError("Failed To open File");
+              // }
+           //}
+
+        //else
+          //  {
+            //        emit DataBaseError("Cannot connect To database !!!!"+m_db.lastError().text());
+          //};
+//}

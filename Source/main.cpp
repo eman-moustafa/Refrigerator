@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-   QStringList Languages;
+  /*  QStringList Languages;
     QTranslator Trans;
     Languages<<"English"<<"Arabic";
     QString Lang=QInputDialog::getItem(NULL,"Select Language","Language",Languages);
@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     }
 
 
-
+*/
 
     MainWindow w;
   //  w.changeLayout(Lang);

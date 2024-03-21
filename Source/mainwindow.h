@@ -146,8 +146,7 @@ private:
     QString TimeToDefrostConditions=NULL;
 
 
-public:
-    const QByteArray data;
+
 
 };
 #endif // MAINWINDOW_H

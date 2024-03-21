@@ -40,8 +40,6 @@ void MainWindow::changeLayout(QString Lang)
          QMessageBox::about(this, tr("Choose Language"),
                             tr("You Should Choose Language ."));
 
-         QApplication::quit();
-
 
          }
 
@@ -191,6 +189,7 @@ void MainWindow::readData()
          RefrigeratorDefrostFactor   = values.at(40);
          TimeToDefrostConditions   = values.at(41);
 
+         qDebug()<<m_Data->DamperState;
          parseData();
          updateData();
     }
